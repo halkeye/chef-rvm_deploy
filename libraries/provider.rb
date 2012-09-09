@@ -63,6 +63,7 @@ class RvmDeployProvider < Chef::Provider::Deploy::Revision
       cwd release_path
       user new_resource.user
       code "bundle install"
+      environment new_resource.environment
     end
   end
 
