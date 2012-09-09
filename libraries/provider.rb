@@ -44,14 +44,16 @@ class RvmDeployProvider < Chef::Provider::Deploy::Revision
   def create_gemset
     user = @new_resource.user
     ruby_string = @new_resource.ruby_string
-
     ruby_version, gemset = ruby_string.split('@')
-    rvm_gemset gemset do
-      ruby_string ruby_version
-    end
 
-    execute "chown gemset to #{user}" do
-     command %(chown #{user} -R "#{node[:rvm][:root_path]}/gems/#{ruby_string}")
+    if gemset && !gemset.empty?
+      rvm_gemset gemset do
+        ruby_string ruby_version
+      end
+
+      execute "chown gemset to #{user}" do
+        command %(chown #{user} -R "#{node[:rvm][:root_path]}/gems/#{ruby_string}")
+      end
     end
   end
 

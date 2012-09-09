@@ -12,7 +12,7 @@ or deploy_revision resources, but it provides rvm integration.
 You can use any attibutes you can use in <a href="http://wiki.opscode.com/display/chef/Deploy+Resource">Deploy</a>
 resource, with some additions:
 
-* ruby_string, String, default: nil, example: "ruby-1.9.3-p194@gemset", gemset is required for now
+* ruby_string, String, default: nil, example: "ruby-1.9.3-p194@gemset", gemset is optional
 * precompile_assets, Boolean, default: true
 
 ```ruby
