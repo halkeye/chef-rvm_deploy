@@ -27,7 +27,8 @@ class RvmDeployProvider < Chef::Provider::Deploy::Revision
       source "setup_load_paths.rb"
       cookbook "rvm_deploy"
       owner new_resource.user
-    end
+      action :nothing
+    end.run_action(:create)
 
     new_resource.symlinks["config/setup_load_paths.rb"] = "config/setup_load_paths.rb"
   end
@@ -49,11 +50,13 @@ class RvmDeployProvider < Chef::Provider::Deploy::Revision
     if gemset && !gemset.empty?
       rvm_gemset gemset do
         ruby_string ruby_version
-      end
+        action :nothing
+      end.run_action(:create)
 
       execute "chown gemset to #{user}" do
         command %(chown #{user} -R "#{node[:rvm][:root_path]}/gems/#{ruby_string}")
-      end
+        action :nothing
+      end.run_action(:run)
     end
   end
 
@@ -63,8 +66,8 @@ class RvmDeployProvider < Chef::Provider::Deploy::Revision
       cwd release_path
       user new_resource.user
       code "bundle install"
-      environment new_resource.environment
-    end
+      action :nothing
+    end.run_action(:run)
   end
 
   # @see http://jessewolgamott.com/blog/2012/09/03/the-one-where-you-take-your-deploy-to-11-asset-pipeline/
@@ -89,7 +92,8 @@ class RvmDeployProvider < Chef::Provider::Deploy::Revision
         user new_resource.user
         code "bundle exec rake assets:precompile"
         environment new_resource.environment
-      end
+        action :nothing
+      end.run_action(:run)
     end
   end
 
@@ -105,7 +109,8 @@ class RvmDeployProvider < Chef::Provider::Deploy::Revision
         user new_resource.user
         code new_resource.migration_command
         environment new_resource.environment
-      end
+        action :nothing
+      end.run_action(:run)
     end
   end
 
@@ -119,6 +124,7 @@ class RvmDeployProvider < Chef::Provider::Deploy::Revision
       environment new_resource.environment
       code "bundle exec rake airbrake:deploy TO=#{new_resource.environment['RAILS_ENV']} REVISION='#{revision}' REPO='#{repository}' USER='#{user}'"
       ignore_failure true
-    end
+      action :nothing
+    end.run_action(:run)
   end
 end
